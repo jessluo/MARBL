@@ -2772,7 +2772,7 @@ contains
     if (present(Ea)) then
 
         ! Arrhenius temperature scaling
-        Tfunc = exp(Ea * (column_temperature - Tref) / K_Boltz * (column_temperature + T0_Kelvin) * (Tref + T0_Kelvin))
+        Tfunc = exp(-Ea * (column_temperature - Tref) / K_Boltz * (column_temperature + T0_Kelvin) * (Tref + T0_Kelvin))
 
     else
 
