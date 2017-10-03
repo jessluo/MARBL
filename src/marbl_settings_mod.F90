@@ -1133,11 +1133,11 @@ contains
                         nondefault_required=(PFT_defaults .eq. 'user-specified'))
       call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
 
-      write(sname, "(2A)") trim(prefix), 'alphaPi_per_day'
+      write(sname, "(2A)") trim(prefix), 'alphaPI_per_day'
       lname    = 'Initial slope of P_I curve (GD98)'
       units    = 'mmol C m^2 / (mg Chl W day)'
       datatype = 'real'
-      rptr     => autotrophs(n)%alphaPi_per_day
+      rptr     => autotrophs(n)%alphaPI_per_day
       call this%add_var(sname, lname, units, datatype, category,     &
                         marbl_status_log, rptr=rptr,                 &
                         nondefault_required=(PFT_defaults .eq. 'user-specified'))
@@ -1243,6 +1243,16 @@ contains
                         nondefault_required=(PFT_defaults .eq. 'user-specified'))
       call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
 
+      write(sname, "(2A)") trim(prefix), 'Ea'
+      lname    = 'activation energy for Arrhenius equation'
+      units    = 'eV'
+      datatype = 'real'
+      rptr     => autotrophs(n)%Ea
+      call this%add_var(sname, lname, units, datatype, category,     &
+      marbl_status_log, rptr=rptr,                 &
+      nondefault_required=(PFT_defaults .eq. 'user-specified'))
+      call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
+
     end do
 
     do n=1, zooplankton_cnt
@@ -1297,6 +1307,16 @@ contains
       call this%add_var(sname, lname, units, datatype, category,       &
                         marbl_status_log, rptr=rptr,                 &
                         nondefault_required=(PFT_defaults .eq. 'user-specified'))
+      call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
+
+      write(sname, "(2A)") trim(prefix), 'Ea'
+      lname    = 'activation energy for Arrhenius equation'
+      units    = 'eV'
+      datatype = 'real'
+      rptr     => zooplankton(n)%Ea
+      call this%add_var(sname, lname, units, datatype, category,       &
+      marbl_status_log, rptr=rptr,                 &
+      nondefault_required=(PFT_defaults .eq. 'user-specified'))
       call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
 
     end do
