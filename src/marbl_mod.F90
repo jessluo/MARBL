@@ -2772,7 +2772,7 @@ contains
     if (present(Ea)) then
 
         ! Arrhenius temperature scaling
-        Tfunc = exp(-Ea * (column_temperature - Tref) / K_Boltz * (column_temperature + T0_Kelvin) * (Tref + T0_Kelvin))
+        Tfunc = exp(-Ea * (Tref - column_temperature) / (K_Boltz * (column_temperature + T0_Kelvin) * (Tref + T0_Kelvin)))
 
     else
 
@@ -3084,8 +3084,8 @@ contains
     !-----------------------------------------------------------------------
 
     associate(                                               &
-         gQp      => autotroph_secondary_species(:)%gQp,     & ! p/C for growth
-         gQfe     => autotroph_secondary_species(:)%gQfe,    & ! fe/C for growth
+         gQp      => autotroph_secondary_species(:)%gQp,     & ! P/C for growth
+         gQfe     => autotroph_secondary_species(:)%gQfe,    & ! Fe/C for growth
          gQsi     => autotroph_secondary_species(:)%gQsi,    & ! diatom Si/C ratio for growth (new biomass)
          VNO3     => autotroph_secondary_species(:)%VNO3,    & ! input
          VNH4     => autotroph_secondary_species(:)%VNH4,    & ! input
@@ -3099,7 +3099,7 @@ contains
          PO4_V    => autotroph_secondary_species(:)%PO4_V,   & ! output
          DOP_V    => autotroph_secondary_species(:)%DOP_V,   & ! output
          photoFe  => autotroph_secondary_species(:)%photoFe, & ! output
-         photoSi  => autotroph_secondary_species(:)%photoSi  & ! output
+         photoSi  => autotroph_secondary_species(:)%photoSi & ! output
          )
 
     do auto_ind = 1, auto_cnt

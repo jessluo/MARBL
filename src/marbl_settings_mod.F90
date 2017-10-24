@@ -127,7 +127,7 @@ module marbl_settings_mod
   ! Partitioning of phytoplankton growth, grazing and losses
   ! All f_* variables are fractions and are non-dimensional
   real(r8), parameter :: &
-      caco3_poc_min         = 0.40_r8,  & ! minimum proportionality between
+      caco3_poc_min         = 0.60_r8,  & ! minimum proportionality between
                                           !   QCaCO3 and grazing losses to POC
                                           !   (mmol C/mmol CaCO3)
       spc_poc_fac           = 0.13_r8,  & ! small phyto grazing factor (1/mmolC)
@@ -149,7 +149,7 @@ module marbl_settings_mod
       gQsi_0        = 0.137_r8,           & !initial Si/C ratio for growth
       gQsi_max      = 0.685_r8,           & !max Si/C ratio for growth
       gQsi_min      = 0.0457_r8,          & !min Si/C ratio for growth
-      QCaCO3_max    = 0.4_r8,             & !max QCaCO3
+      QCaCO3_max    = 0.75_r8,             & !max QCaCO3
       ! parameters in GalbraithMartiny Pquota Model^M
       PquotaSlope     = 7.0_r8,        &
       PquotaIntercept = 5.571_r8,      &

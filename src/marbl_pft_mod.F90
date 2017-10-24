@@ -130,8 +130,8 @@ module marbl_pft_mod
      real(r8) :: gQfe            ! fe/C for growth
      real(r8) :: Qsi             ! current Si/C ratio (mmol Si/mmol C)
      real(r8) :: gQsi            ! diatom Si/C ratio for growth (new biomass)
-     real(r8) :: VNO3            ! NH4 uptake rate (non-dim)
-     real(r8) :: VNH4            ! NO3 uptake rate (non-dim)
+     real(r8) :: VNO3            ! NO3 uptake rate (non-dim)
+     real(r8) :: VNH4            ! NH4 uptake rate (non-dim)
      real(r8) :: VNtot           ! total N uptake rate (non-dim)
      real(r8) :: NO3_V           ! nitrate uptake (mmol NO3/m^3/sec)
      real(r8) :: NH4_V           ! ammonium uptake (mmol NH4/m^3/sec)
