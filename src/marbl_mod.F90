@@ -101,7 +101,6 @@ module marbl_mod
   use marbl_settings_mod, only : ladjust_bury_coeff
   use marbl_settings_mod, only : autotrophs
   use marbl_settings_mod, only : zooplankton
-  use marbl_settings_mod, only : f_qsw_par
   use marbl_settings_mod, only : parm_Fe_bioavail
   use marbl_settings_mod, only : dust_to_Fe
   use marbl_settings_mod, only : denitrif_C_N
@@ -362,20 +361,21 @@ contains
        bury_coeff_rmean_timescale_sec = bury_coeff_rmean_timescale_years * 365.0_r8 * spd
 
        glo_avg_rmean_interior(:)%timescale       = bury_coeff_rmean_timescale_sec
-       glo_avg_rmean_interior(:)%linit_by_val    = (init_bury_coeff_opt == 'nml')
+       glo_avg_rmean_interior(:)%linit_by_val    = (init_bury_coeff_opt == 'settings_file')
 
        glo_avg_rmean_surface(:)%timescale        = bury_coeff_rmean_timescale_sec
-       glo_avg_rmean_surface(:)%linit_by_val     = (init_bury_coeff_opt == 'nml')
+       glo_avg_rmean_surface(:)%linit_by_val     = (init_bury_coeff_opt == 'settings_file')
 
        glo_scalar_rmean_interior(:)%timescale    = bury_coeff_rmean_timescale_sec
-       glo_scalar_rmean_interior(:)%linit_by_val = (init_bury_coeff_opt == 'nml')
+       glo_scalar_rmean_interior(:)%linit_by_val = (init_bury_coeff_opt == 'settings_file')
 
        glo_scalar_rmean_surface(:)%timescale     = bury_coeff_rmean_timescale_sec
-       glo_scalar_rmean_surface(:)%linit_by_val  = (init_bury_coeff_opt == 'nml')
+       glo_scalar_rmean_surface(:)%linit_by_val  = (init_bury_coeff_opt == 'settings_file')
 
 
-       ! these initial values are only used if linit_by_val is .true. (i.e., if init_bury_coeff_opt == 'nml')
-       ! always set them, for simpler code
+       ! these initial values are only used if linit_by_val is .true.
+       ! (i.e., if init_bury_coeff_opt == 'settings_file')
+       ! However, for simpler code we always set them
 
 !      rmean_ALK_nonN_input_integral = 1.62e-4_r8 ! GNEWS2000 value on gx1v6 grid [neq/cm^2/s]
        rmean_CaCO3_bury_integral     = 1.62e-4_r8 ! matches rmean_ALK_nonN_input_integral
@@ -1813,8 +1813,6 @@ contains
     use marbl_nhx_surface_emis_mod, only : marbl_comp_nhx_surface_emis
     use marbl_settings_mod, only : lcompute_nhx_surface_emis
     use marbl_settings_mod, only : xkw_coeff
-    use marbl_settings_mod, only : iron_frac_in_dust
-    use marbl_settings_mod, only : iron_frac_in_bc
     use marbl_ciso_mod, only : marbl_ciso_set_surface_forcing
 
     implicit none
@@ -2508,6 +2506,8 @@ contains
     !  0.45   fraction of incoming SW -> PAR (non-dim)
     !-----------------------------------------------------------------------
 
+    use marbl_settings_mod, only : f_qsw_par
+
     ! PAR is intent(inout) because it components, while entirely set here, are allocated elsewhere
 
     integer(int_kind)                         , intent(in)    :: auto_cnt
@@ -2547,6 +2547,10 @@ contains
        PAR%interface(0,:) = f_qsw_par *                                       &
               interior_forcings(interior_forcing_ind%surf_shortwave_id)%field_1d(1,:)
     elsewhere
+       PAR%interface(0,:) = c0
+    endwhere
+
+    where (PAR%interface(0,:) < PAR_threshold)
        PAR%interface(0,:) = c0
     endwhere
 
@@ -3889,9 +3893,9 @@ contains
              call marbl_status_log%log_error(log_message, subname)
              write(log_message, "(A,1x,I0)") 'k =', k
              call marbl_status_log%log_error(log_message, subname)
-             write(log_message, "(A,1x,E24.16)") 'Fe_loc =', Fe_loc
+             write(log_message, "(A,1x,E25.17)") 'Fe_loc =', Fe_loc
              call marbl_status_log%log_error(log_message, subname)
-             write(log_message, "(A,1x,E24.16)") 'Lig_loc =', Lig_loc
+             write(log_message, "(A,1x,E25.17)") 'Lig_loc =', Lig_loc
              call marbl_status_log%log_error(log_message, subname)
              return
           end if

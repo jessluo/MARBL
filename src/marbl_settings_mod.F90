@@ -253,8 +253,6 @@ module marbl_settings_mod
        parm_scalelen_z,       & ! depths of prescribed scalelen values
        parm_scalelen_vals       ! prescribed scalelen values
 
-  real(r8),                target :: iron_frac_in_dust            ! fraction by weight of iron in dust
-  real(r8),                target :: iron_frac_in_bc              ! fraction by weight of iron in black carbon
   character(len=char_len), target :: caco3_bury_thres_opt         ! option of threshold of caco3 burial ['fixed_depth', 'omega_calc']
   real(r8),                target :: caco3_bury_thres_depth       ! threshold depth for caco3_bury_thres_opt='fixed_depth'
   ! -----------
@@ -333,47 +331,45 @@ contains
 
   subroutine marbl_settings_set_defaults_general_parms()
 
-    PFT_defaults                  = 'CESM2'      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    ciso_on                       = .false.      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    lsource_sink                  = .true.       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    ciso_lsource_sink             = .true.       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    lecovars_full_depth_tavg      = .false.      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    ciso_lecovars_full_depth_tavg = .false.      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    lflux_gas_o2                  = .true.       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    lflux_gas_co2                 = .true.       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    lcompute_nhx_surface_emis     = .true.       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    lvariable_PtoC                = .true.       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    init_bury_coeff_opt           = 'nml'        ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    ladjust_bury_coeff            = .false.      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_Fe_bioavail           = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_o2_min                = 5.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_o2_min_delta          = 5.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_kappa_nitrif_per_day  = 0.06_r8         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_nitrif_par_lim        = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_labile_ratio          = 0.94_r8         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_init_POC_bury_coeff   = 1.1_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_init_POP_bury_coeff   = 1.1_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_init_bSi_bury_coeff   = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_Fe_scavenge_rate0     = 15.0_r8         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_Lig_scavenge_rate0    = 0.015_r8        ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_FeLig_scavenge_rate0  = 1.3_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_Lig_degrade_rate0     = 0.000094_r8     ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_Fe_desorption_rate0   = 1.0e-6_r8       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_f_prod_sp_CaCO3       = 0.070_r8        ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_POC_diss              = 100.0e2_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_SiO2_diss             = 770.0e2_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_CaCO3_diss            = 500.0e2_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    parm_sed_denitrif_coeff    = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    bury_coeff_rmean_timescale_years = 10.0_r8   ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    PFT_defaults                  = 'CESM2'         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    ciso_on                       = .false.         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    lsource_sink                  = .true.          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    ciso_lsource_sink             = .true.          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    lecovars_full_depth_tavg      = .false.         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    ciso_lecovars_full_depth_tavg = .false.         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    lflux_gas_o2                  = .true.          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    lflux_gas_co2                 = .true.          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    lcompute_nhx_surface_emis     = .true.          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    lvariable_PtoC                = .true.          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    init_bury_coeff_opt           = 'settings_file' ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    ladjust_bury_coeff            = .false.         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_Fe_bioavail              = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_o2_min                   = 5.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_o2_min_delta             = 5.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_kappa_nitrif_per_day     = 0.06_r8         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_nitrif_par_lim           = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_labile_ratio             = 0.94_r8         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_init_POC_bury_coeff      = 1.1_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_init_POP_bury_coeff      = 1.1_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_init_bSi_bury_coeff      = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_Fe_scavenge_rate0        = 15.0_r8         ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_Lig_scavenge_rate0       = 0.015_r8        ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_FeLig_scavenge_rate0     = 1.3_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_Lig_degrade_rate0        = 0.000094_r8     ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_Fe_desorption_rate0      = 1.0e-6_r8       ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_f_prod_sp_CaCO3          = 0.070_r8        ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_POC_diss                 = 100.0e2_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_SiO2_diss                = 770.0e2_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_CaCO3_diss               = 500.0e2_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    parm_sed_denitrif_coeff       = 1.0_r8          ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    bury_coeff_rmean_timescale_years = 10.0_r8      ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
     parm_scalelen_z    = (/ 100.0e2_r8, 250.0e2_r8, 500.0e2_r8, 1000.0e2_r8 /)  ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
     parm_scalelen_vals = (/     1.0_r8,     2.2_r8,     4.0_r8,      5.0_r8 /)  ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
 
-    iron_frac_in_dust      = 0.035_r8 * 0.01_r8  ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    iron_frac_in_bc        = 0.06_r8             ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    caco3_bury_thres_opt   = 'omega_calc'        ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    caco3_bury_thres_depth = 3000.0e2            ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    PON_bury_coeff         = 0.5_r8              ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
-    ciso_fract_factors     = 'Rau'               ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    caco3_bury_thres_opt   = 'omega_calc'           ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    caco3_bury_thres_depth = 3000.0e2               ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    PON_bury_coeff         = 0.5_r8                 ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
+    ciso_fract_factors     = 'Laws'                 ! CESM USERS - DO NOT CHANGE HERE! POP calls put_setting() for this var, see CESM NOTE above
 
   end subroutine marbl_settings_set_defaults_general_parms
 
@@ -819,24 +815,6 @@ contains
     ! -----------------------------
     category  = 'general parmeters'
     ! -----------------------------
-
-    sname     = 'iron_frac_in_dust'
-    lname     = 'Fraction by weight of iron in dust'
-    units     = 'unitless (kg/kg)'
-    datatype  = 'real'
-    rptr      => iron_frac_in_dust
-    call this%add_var(sname, lname, units, datatype, category,       &
-                        marbl_status_log, rptr=rptr)
-    call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
-
-    sname     = 'iron_frac_in_bc'
-    lname     = 'Fraction by weight of iron in black carbon'
-    units     = 'unitless (kg/kg)'
-    datatype  = 'real'
-    rptr      => iron_frac_in_bc
-    call this%add_var(sname, lname, units, datatype, category,       &
-                        marbl_status_log, rptr=rptr)
-    call check_and_log_add_var_error(marbl_status_log, sname, subname, labort_marbl_loc)
 
     sname     = 'caco3_bury_thres_opt'
     lname     = 'Option for CaCO3 burial threshold'
@@ -2110,7 +2088,7 @@ contains
               write(log_message, "(4A)") trim(ll_ptr%short_name), " = '",  &
                                          trim(ll_ptr%sptr), "'"
             case ('real')
-              write(log_message, "(2A,E24.16)") trim(ll_ptr%short_name),   &
+              write(log_message, "(2A,E25.17)") trim(ll_ptr%short_name),   &
                                                 " = ", ll_ptr%rptr
             case ('integer')
               write(log_message, "(2A,I0)") trim(ll_ptr%short_name), " = ", &
@@ -2484,7 +2462,7 @@ contains
     !---------------------------------------------------------------------------
     character(len=char_len) :: log_message
 
-    write(log_message, "(2A,E24.16,3A)") &
+    write(log_message, "(2A,E25.17,3A)") &
          trim(sname_out), ' = ', val_out, ' (value computed from ', trim(sname_in), ')'
     call marbl_status_log%log_noerror(log_message, subname)
 
