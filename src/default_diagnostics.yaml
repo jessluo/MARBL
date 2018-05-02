@@ -12,7 +12,9 @@
 # MARBL also stores the diagnostic long name, units, and information about its vertical
 # grid. That is not necessary for the GCM, but will be used in a future version of MARBL
 # to auto-generate the Fortran code that defines these diagnostics.
-
+#
+# Frequency: high = daily; medium = monthly; low = annual; never = none
+#
 ################################################################################
 #                          Surface forcing diagnostics                         #
 ################################################################################
@@ -1414,7 +1416,7 @@ graze_((autotroph_sname))_poc_zint :
    longname : ((autotroph_lname)) Grazing to POC Vertical Integral
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : medium
+   frequency : never
    operator : average
 graze_((autotroph_sname))_poc_zint_100m :
    longname : ((autotroph_lname)) Grazing to POC Vertical Integral, 0-100m
@@ -1426,7 +1428,7 @@ graze_((autotroph_sname))_doc_zint :
    longname : ((autotroph_lname)) Grazing to DOC Vertical Integral
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : medium
+   frequency : never
    operator : average
 graze_((autotroph_sname))_doc_zint_100m :
    longname : ((autotroph_lname)) Grazing to DOC Vertical Integral, 0-100m
@@ -1438,7 +1440,7 @@ graze_((autotroph_sname))_zoo_zint :
    longname : ((autotroph_lname)) Grazing to ZOO Vertical Integral
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : medium
+   frequency : never
    operator : average
 graze_((autotroph_sname))_zoo_zint_100m :
    longname : ((autotroph_lname)) Grazing to ZOO Vertical Integral, 0-100m
@@ -1830,7 +1832,7 @@ graze_((zooplankton_sname))_zint_100m :
    longname : ((zooplankton_lname)) Grazing Vertical Integral, 0-100m
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : never
+   frequency : medium
    operator : average
 graze_((zooplankton_sname))_poc_zint :
    longname : ((zooplankton_lname)) Grazing to POC Vertical Integral
@@ -1842,7 +1844,7 @@ graze_((zooplankton_sname))_poc_zint_100m :
    longname : ((zooplankton_lname)) Grazing to POC Vertical Integral, 0-100m
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : never
+   frequency : medium
    operator : average
 graze_((zooplankton_sname))_doc_zint :
    longname : ((zooplankton_lname)) Grazing to DOC Vertical Integral
@@ -1854,7 +1856,7 @@ graze_((zooplankton_sname))_doc_zint_100m :
    longname : ((zooplankton_lname)) Grazing to DOC Vertical Integral, 0-100m
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : never
+   frequency : medium
    operator : average
 graze_((zooplankton_sname))_zoo_zint :
    longname : ((zooplankton_lname)) Grazing to ZOO Vertical Integral
@@ -1872,13 +1874,13 @@ x_graze_((zooplankton_sname))_zint :
    longname : ((zooplankton_lname)) Grazing Gain Vertical Integral
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : never
+   frequency : medium
    operator : average
 x_graze_((zooplankton_sname))_zint_100m :
    longname : ((zooplankton_lname)) Grazing Gain Vertical Integral, 0-100m
    units : mmol/m^3 cm/s
    vertical_grid : none
-   frequency : never
+   frequency : medium
    operator : average
 ((zooplankton_sname))_loss :
    longname : ((zooplankton_lname)) Loss
