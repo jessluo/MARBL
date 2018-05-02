@@ -41,9 +41,9 @@
             "Ea": {
                "datatype": "real",
                "default_value": {
-                  "autotrophs = \"diat\"": 0.32,
-                  "autotrophs = \"diaz\"": 0.32,
-                  "autotrophs = \"sp\"": 0.32,
+                  "((autotroph_sname)) == \"diat\"": 0.32,
+                  "((autotroph_sname)) == \"diaz\"": 0.32,
+                  "((autotroph_sname)) == \"sp\"": 0.32,
                   "default": "1e34"
                },
                "longname": "Activation energy for Arrhenius equation (eV)",
@@ -520,8 +520,8 @@
             "Ea": {
                "datatype": "real",
                "default_value": {
-                  "default": "1e34",
-                  "zooplankton = \"zoo\"": 0.65
+                  "((zooplankton_sname)) == \"zoo\"": 0.65,
+                  "default": "1e34"
                },
                "longname": "Activation energy for Arrhenius equation (eV)",
                "subcategory": "11. zooplankton",
