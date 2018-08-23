@@ -530,6 +530,7 @@ contains
     type(dissolved_organic_matter_type)      :: dissolved_organic_matter(domain%km)
     type(carbonate_type)                     :: carbonate(domain%km)
 
+
     ! NOTE(bja, 2015-07) vectorization: arrays that are (n, k, c, i)
     ! probably can not be vectorized reasonably over c without memory
     ! copies. If we break up the main k loop, some of the (k, c) loops
@@ -839,6 +840,7 @@ contains
 
     ! ADD RESTORING
     dtracers = dtracers + interior_restore
+
 
   end subroutine marbl_set_interior_forcing
 
@@ -2457,7 +2459,7 @@ contains
     !-----------------------------------------------------------------------
 
     cks = 10._r8
-    cksi = 5._r8
+    cksi = 6._r8
 
     do auto_ind = 1, autotroph_cnt
        if (lvariable_PtoC) then
@@ -3376,29 +3378,41 @@ contains
          auto_graze_poc => autotroph_secondary_species(:)%auto_graze_poc  , & ! output
          auto_graze_dic => autotroph_secondary_species(:)%auto_graze_dic  , & ! output
          auto_graze_doc => autotroph_secondary_species(:)%auto_graze_doc  , & ! output
-         auto_graze_zoo => autotroph_secondary_species(:)%auto_graze_zoo  , & ! output
+         auto_graze_zootot => autotroph_secondary_species(:)%auto_graze_zootot  , & ! output
          zoo_graze      => zooplankton_secondary_species(:)%zoo_graze     , & ! output
          zoo_graze_poc  => zooplankton_secondary_species(:)%zoo_graze_poc , & ! output
          zoo_graze_dic  => zooplankton_secondary_species(:)%zoo_graze_dic , & ! output
          zoo_graze_doc  => zooplankton_secondary_species(:)%zoo_graze_doc , & ! output
-         zoo_graze_zoo  => zooplankton_secondary_species(:)%zoo_graze_zoo , & ! output
+         zoo_graze_zootot  => zooplankton_secondary_species(:)%zoo_graze_zootot , & ! output
          x_graze_zoo    => zooplankton_secondary_species(:)%x_graze_zoo   , & ! output
          f_zoo_detr     => zooplankton_secondary_species(:)%f_zoo_detr      & ! output
          )
 
     auto_graze(:)     = c0 ! total grazing losses from autotroph pool at auto_ind
-    auto_graze_zoo(:) = c0 ! autotroph grazing losses routed to zooplankton at auto_ind
+    auto_graze_zootot(:) = c0 ! autotroph grazing losses routed to total zooplankton at auto_ind
     auto_graze_poc(:) = c0 ! autotroph grazing losses routed to poc
     auto_graze_doc(:) = c0 ! autotroph grazing losses routed to doc
     auto_graze_dic(:) = c0 ! autotroph grazing losses routed to dic (computed by residual)
 
     zoo_graze(:)     = c0 ! total grazing losses from zooplankton pool at zoo_ind
-    zoo_graze_zoo(:) = c0 ! zooplankton grazing losses routed to zooplankton at zoo_ind
+    zoo_graze_zootot(:) = c0 ! zooplankton grazing losses routed to total zooplankton at zoo_ind
     zoo_graze_poc(:) = c0 ! zooplankton grazing losses routed to poc
     zoo_graze_doc(:) = c0 ! zooplankton grazing losses routed to doc
     zoo_graze_dic(:) = c0 ! zooplankton grazing losses routed to dic (computed by residual)
 
     x_graze_zoo(:)   = c0 ! grazing gains by zooplankton at zoo_ind
+
+    do auto_ind=1, autotroph_cnt
+        if (.not. allocated(autotroph_secondary_species(auto_ind)%auto_graze_zoo)) &
+            allocate(autotroph_secondary_species(auto_ind)%auto_graze_zoo(zooplankton_cnt))
+        autotroph_secondary_species(auto_ind)%auto_graze_zoo(:) = c0 ! autotroph grazing losses routed to individual zooplankton at auto_ind
+    end do
+
+    do zoo_ind=1, zooplankton_cnt
+        if (.not. allocated(zooplankton_secondary_species(zoo_ind)%zoo_graze_zoo)) &
+             allocate(zooplankton_secondary_species(zoo_ind)%zoo_graze_zoo(zooplankton_cnt))
+        zooplankton_secondary_species(zoo_ind)%zoo_graze_zoo(:) = c0 ! zooplankton grazing losses routed to individual zooplankton at zoo_ind
+    end do
 
     do pred_ind = 1, zoo_cnt
 
@@ -3460,7 +3474,8 @@ contains
              auto_graze(auto_ind) = auto_graze(auto_ind) + work2
 
              ! routed to zooplankton
-             auto_graze_zoo(auto_ind) = auto_graze_zoo(auto_ind) + grazing(prey_ind, pred_ind)%graze_zoo * work2
+             auto_graze_zootot(auto_ind) = auto_graze_zootot(auto_ind) + grazing(prey_ind, pred_ind)%graze_zoo * work2
+             autotroph_secondary_species(auto_ind)%auto_graze_zoo(pred_ind) = grazing(prey_ind, pred_ind)%graze_zoo * work2
              x_graze_zoo(pred_ind)    = x_graze_zoo(pred_ind)    + grazing(prey_ind, pred_ind)%graze_zoo * work2
 
              ! routed to POC
@@ -3499,7 +3514,8 @@ contains
              zoo_graze(zoo_ind) = zoo_graze(zoo_ind) + work2
 
              ! routed to zooplankton
-             zoo_graze_zoo(zoo_ind) = zoo_graze_zoo(zoo_ind) + grazing(prey_ind, pred_ind)%graze_zoo * work2
+             zoo_graze_zootot(zoo_ind) = zoo_graze_zootot(zoo_ind) + grazing(prey_ind, pred_ind)%graze_zoo * work2
+             zooplankton_secondary_species(zoo_ind)%zoo_graze_zoo(pred_ind) = grazing(prey_ind, pred_ind)%graze_zoo * work2
              x_graze_zoo(pred_ind) = x_graze_zoo(pred_ind)   + grazing(prey_ind, pred_ind)%graze_zoo * work2
 
              ! routed to POC/DOC
@@ -3544,7 +3560,7 @@ contains
     associate(                                                               &
          Qp              => autotroph_secondary_species(:)%Qp              , & ! input
          auto_graze      => autotroph_secondary_species(:)%auto_graze      , & ! input
-         auto_graze_zoo  => autotroph_secondary_species(:)%auto_graze_zoo  , & ! input
+         auto_graze_zootot  => autotroph_secondary_species(:)%auto_graze_zootot  , & ! input
          auto_graze_poc  => autotroph_secondary_species(:)%auto_graze_poc  , & ! input
          auto_graze_doc  => autotroph_secondary_species(:)%auto_graze_doc  , & ! input
          auto_loss       => autotroph_secondary_species(:)%auto_loss       , & ! input
@@ -3554,7 +3570,7 @@ contains
          zoo_graze       => zooplankton_secondary_species(:)%zoo_graze     , & ! input
          zoo_graze_poc   => zooplankton_secondary_species(:)%zoo_graze_poc , & ! input
          zoo_graze_doc   => zooplankton_secondary_species(:)%zoo_graze_doc , & ! input
-         zoo_graze_zoo   => zooplankton_secondary_species(:)%zoo_graze_zoo , & ! input
+         zoo_graze_zootot   => zooplankton_secondary_species(:)%zoo_graze_zootot , & ! input
          zoo_loss        => zooplankton_secondary_species(:)%zoo_loss      , & ! input
          f_zoo_detr      => zooplankton_secondary_species(:)%f_zoo_detr    , & ! input
 
@@ -3576,11 +3592,11 @@ contains
     !-----------------------------------------------------------------------
     do auto_ind = 1, auto_cnt
        auto_graze_dic(auto_ind) = auto_graze(auto_ind) &
-            - (auto_graze_zoo(auto_ind) + auto_graze_poc(auto_ind) + auto_graze_doc(auto_ind))
+            - (auto_graze_zootot(auto_ind) + auto_graze_poc(auto_ind) + auto_graze_doc(auto_ind))
     end do
     do zoo_ind = 1, zoo_cnt
        zoo_graze_dic(zoo_ind) = zoo_graze(zoo_ind)  &
-            - (zoo_graze_zoo(zoo_ind) + zoo_graze_poc(zoo_ind) + zoo_graze_doc(zoo_ind))
+            - (zoo_graze_zootot(zoo_ind) + zoo_graze_poc(zoo_ind) + zoo_graze_doc(zoo_ind))
     end do
 
     !-----------------------------------------------------------------------
@@ -3603,7 +3619,7 @@ contains
        remaining_P_pop(auto_ind) = (auto_graze_poc(auto_ind) + auto_loss_poc(auto_ind) + auto_agg(auto_ind)) * Qp(auto_ind)
 
        remaining_P = (auto_graze(auto_ind) + auto_loss(auto_ind) + auto_agg(auto_ind)) * Qp(auto_ind) &
-          - auto_graze_zoo(auto_ind) * Qp_zoo - remaining_P_pop(auto_ind)
+          - auto_graze_zootot(auto_ind) * Qp_zoo - remaining_P_pop(auto_ind)
 
        !-----------------------------------------------------------------------
        ! reduce sinking pop if remaining_P is negative
@@ -4333,7 +4349,7 @@ contains
          auto_loss_doc   => autotroph_secondary_species(:)%auto_loss_doc   , & ! auto_loss routed to doc (mmol C/m^3/sec)
          auto_agg        => autotroph_secondary_species(:)%auto_agg        , & ! autotroph aggregation (mmol C/m^3/sec)
          auto_graze      => autotroph_secondary_species(:)%auto_graze      , & ! autotroph grazing rate (mmol C/m^3/sec)
-         auto_graze_zoo  => autotroph_secondary_species(:)%auto_graze_zoo  , & ! auto_graze routed to zoo (mmol C/m^3/sec)
+         auto_graze_zootot  => autotroph_secondary_species(:)%auto_graze_zootot  , & ! auto_graze routed to zoo total (mmol C/m^3/sec)
          auto_graze_dic  => autotroph_secondary_species(:)%auto_graze_dic  , & ! auto_graze routed to dic (mmol C/m^3/sec)
          auto_graze_doc  => autotroph_secondary_species(:)%auto_graze_doc  , & ! auto_graze routed to doc (mmol C/m^3/sec)
          CaCO3_form      => autotroph_secondary_species(:)%CaCO3_form      , & ! prod. of CaCO3 by small phyto (mmol CaCO3/m^3/sec)
@@ -4344,7 +4360,7 @@ contains
          f_zoo_detr      => zooplankton_secondary_species(:)%f_zoo_detr    , & ! frac of zoo losses into large detrital pool (non-dim)
          x_graze_zoo     => zooplankton_secondary_species(:)%x_graze_zoo   , & ! {auto, zoo}_graze routed to zoo (mmol C/m^3/sec)
          zoo_graze       => zooplankton_secondary_species(:)%zoo_graze     , & ! zooplankton losses due to grazing (mmol C/m^3/sec)
-         zoo_graze_zoo   => zooplankton_secondary_species(:)%zoo_graze_zoo , & ! grazing of zooplankton routed to zoo (mmol C/m^3/sec)
+         zoo_graze_zootot   => zooplankton_secondary_species(:)%zoo_graze_zootot , & ! grazing of zooplankton routed to zoo total (mmol C/m^3/sec)
          zoo_graze_dic   => zooplankton_secondary_species(:)%zoo_graze_dic , & ! grazing of zooplankton routed to dic (mmol C/m^3/sec)
          zoo_graze_doc   => zooplankton_secondary_species(:)%zoo_graze_doc , & ! grazing of zooplankton routed to doc (mmol C/m^3/sec)
          zoo_loss        => zooplankton_secondary_species(:)%zoo_loss      , & ! mortality & higher trophic grazing on zooplankton (mmol C/m^3/sec)
@@ -4408,7 +4424,7 @@ contains
     do auto_ind = 1, autotroph_cnt
        dtracers(fe_ind) = dtracers(fe_ind) &
             + (Qfe(auto_ind) * (auto_loss_dic(auto_ind) + auto_graze_dic(auto_ind))) &
-            + auto_graze_zoo(auto_ind) * (Qfe(auto_ind) - Qfe_zoo) &
+            + auto_graze_zootot(auto_ind) * (Qfe(auto_ind) - Qfe_zoo) &
             + (Qfe(auto_ind) * (auto_loss_doc(auto_ind) + auto_graze_doc(auto_ind)))
     end do
 
@@ -4622,7 +4638,7 @@ contains
        share%zootot_loss_doc_fields  = sum(zooplankton_secondary_species(:)%zoo_loss_doc)
        share%zootot_loss_dic_fields  = sum(zooplankton_secondary_species(:)%zoo_loss_dic)
        share%zootot_graze_fields     = sum(zooplankton_secondary_species(:)%zoo_graze)
-       share%zootot_graze_zoo_fields = sum(zooplankton_secondary_species(:)%zoo_graze_zoo)
+       share%zootot_graze_zoo_fields = sum(zooplankton_secondary_species(:)%zoo_graze_zootot)
        share%zootot_graze_poc_fields = sum(zooplankton_secondary_species(:)%zoo_graze_poc)
        share%zootot_graze_doc_fields = sum(zooplankton_secondary_species(:)%zoo_graze_doc)
        share%zootot_graze_dic_fields = sum(zooplankton_secondary_species(:)%zoo_graze_dic)

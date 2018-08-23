@@ -355,7 +355,7 @@ contains
 
          QCaCO3             => autotroph_secondary_species%QCaCO3              , & ! INPUT small phyto CaCO3/C ratio (mmol CaCO3/mmol C)
          auto_graze         => autotroph_secondary_species%auto_graze          , & ! INPUT autotroph grazing rate (mmol C/m^3/sec)
-         auto_graze_zoo     => autotroph_secondary_species%auto_graze_zoo      , & ! INPUT auto_graze routed to zoo (mmol C/m^3/sec)
+         auto_graze_zoo     => autotroph_secondary_species%auto_graze_zootot      , & ! INPUT auto_graze routed to zoo (mmol C/m^3/sec)
          auto_graze_poc     => autotroph_secondary_species%auto_graze_poc      , & ! INPUT auto_graze routed to poc (mmol C/m^3/sec)
          auto_graze_doc     => autotroph_secondary_species%auto_graze_doc      , & ! INPUT auto_graze routed to doc (mmol C/m^3/sec)
          auto_graze_dic     => autotroph_secondary_species%auto_graze_dic      , & ! INPUT auto_graze routed to dic (mmol C/m^3/sec)

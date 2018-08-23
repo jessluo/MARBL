@@ -1594,12 +1594,19 @@ graze_((autotroph_sname))_doc :
    truncate : true
    frequency : never
    operator : average
-graze_((autotroph_sname))_zoo :
-   longname : ((autotroph_lname)) Grazing to ZOO
+graze_((autotroph_sname))_zootot :
+   longname : ((autotroph_lname)) Grazing to ZOO TOT
    units : mmol/m^3/s
    vertical_grid : layer_avg
    truncate : true
-   frequency : never
+   frequency : medium
+   operator : average
+graze_((autotroph_sname))_((zooplankton_sname)) :
+   longname : ((autotroph_lname)) Grazing to ((zooplankton_lname))
+   units : mmol/m^3/s
+   vertical_grid : layer_avg
+   truncate : true
+   frequency : medium
    operator : average
 ((autotroph_sname))_loss :
    longname : ((autotroph_lname)) Loss
@@ -1924,8 +1931,15 @@ graze_((zooplankton_sname))_doc :
    truncate : true
    frequency : never
    operator : average
-graze_((zooplankton_sname))_zoo :
-   longname : ((zooplankton_lname)) grazing loss to ZOO
+graze_((zooplankton_sname))_zootot :
+   longname : ((zooplankton_lname)) grazing loss to ZOO TOT
+   units : mmol/m^3/s
+   vertical_grid : layer_avg
+   truncate : true
+   frequency : never
+   operator : average
+graze_((zooplankton_sname))_((zooplankton_sname)) :
+   longname : ((zooplankton_lname)) grazing loss to ((zooplankton_lname))
    units : mmol/m^3/s
    vertical_grid : layer_avg
    truncate : true

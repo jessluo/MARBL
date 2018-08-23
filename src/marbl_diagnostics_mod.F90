@@ -257,7 +257,8 @@ module marbl_diagnostics_mod
     integer(int_kind), allocatable :: auto_graze(:)
     integer(int_kind), allocatable :: auto_graze_poc(:)
     integer(int_kind), allocatable :: auto_graze_doc(:)
-    integer(int_kind), allocatable :: auto_graze_zoo(:)
+    integer(int_kind), allocatable :: auto_graze_zootot(:)
+    integer(int_kind), allocatable :: auto_graze_zoo(:,:)
     integer(int_kind), allocatable :: auto_loss(:)
     integer(int_kind), allocatable :: auto_loss_poc(:)
     integer(int_kind), allocatable :: auto_loss_doc(:)
@@ -276,7 +277,8 @@ module marbl_diagnostics_mod
     integer(int_kind), allocatable :: zoo_graze(:)
     integer(int_kind), allocatable :: zoo_graze_poc(:)
     integer(int_kind), allocatable :: zoo_graze_doc(:)
-    integer(int_kind), allocatable :: zoo_graze_zoo(:)
+    integer(int_kind), allocatable :: zoo_graze_zootot(:)
+    integer(int_kind), allocatable :: zoo_graze_zoo(:,:)
     integer(int_kind), allocatable :: x_graze_zoo(:)
 
      !  ciso ids for nonstandard 3d fields
@@ -418,7 +420,7 @@ contains
     !-----------------------------------------------------------------------
     !  local variables
     !-----------------------------------------------------------------------
-    integer :: n
+    integer :: n, m
     logical :: truncate
     character(len=char_len) :: lname, sname, units, vgrid
     character(len=char_len) :: particulate_flux_ref_depth_str
@@ -2941,7 +2943,8 @@ contains
         allocate(ind%auto_graze(autotroph_cnt))
         allocate(ind%auto_graze_poc(autotroph_cnt))
         allocate(ind%auto_graze_doc(autotroph_cnt))
-        allocate(ind%auto_graze_zoo(autotroph_cnt))
+        allocate(ind%auto_graze_zootot(autotroph_cnt))
+        allocate(ind%auto_graze_zoo(autotroph_cnt, zooplankton_cnt))
         allocate(ind%auto_loss(autotroph_cnt))
         allocate(ind%auto_loss_poc(autotroph_cnt))
         allocate(ind%auto_loss_doc(autotroph_cnt))
@@ -3087,17 +3090,31 @@ contains
           return
         end if
 
-        lname = trim(autotrophs(n)%lname) // ' Grazing to ZOO'
-        sname = 'graze_' // trim(autotrophs(n)%sname) // '_zoo'
+        lname = trim(autotrophs(n)%lname) // ' Grazing to ZOO TOT'
+        sname = 'graze_' // trim(autotrophs(n)%sname) // '_zootot'
         units = 'mmol/m^3/s'
         vgrid = 'layer_avg'
         truncate = .true.
         call diags%add_diagnostic(lname, sname, units, vgrid, truncate,  &
-             ind%auto_graze_zoo(n), marbl_status_log)
+             ind%auto_graze_zootot(n), marbl_status_log)
         if (marbl_status_log%labort_marbl) then
           call log_add_diagnostics_error(marbl_status_log, sname, subname)
           return
         end if
+
+        do m=1, zooplankton_cnt
+            lname = trim(autotrophs(n)%lname) // ' Grazing to ' // trim(zooplankton(m)%lname)
+            sname = 'graze_' // trim(autotrophs(n)%sname) // '_' // trim(zooplankton(m)%sname)
+            units = 'mmol/m^3/s'
+            vgrid = 'layer_avg'
+            truncate = .true.
+            call diags%add_diagnostic(lname, sname, units, vgrid, truncate,  &
+                 ind%auto_graze_zoo(n,m), marbl_status_log)
+            if (marbl_status_log%labort_marbl) then
+                 call log_add_diagnostics_error(marbl_status_log, sname, subname)
+                 return
+            end if
+        end do
 
         lname = trim(autotrophs(n)%lname) // ' Loss'
         sname = trim(autotrophs(n)%sname) // '_loss'
@@ -3241,7 +3258,8 @@ contains
         allocate(ind%zoo_graze(zooplankton_cnt))
         allocate(ind%zoo_graze_poc(zooplankton_cnt))
         allocate(ind%zoo_graze_doc(zooplankton_cnt))
-        allocate(ind%zoo_graze_zoo(zooplankton_cnt))
+        allocate(ind%zoo_graze_zootot(zooplankton_cnt))
+        allocate(ind%zoo_graze_zoo(zooplankton_cnt, zooplankton_cnt))
         allocate(ind%x_graze_zoo(zooplankton_cnt))
       end if
       do n = 1,zooplankton_cnt
@@ -3317,17 +3335,31 @@ contains
           return
         end if
 
-        lname    = trim(zooplankton(n)%lname) // ' grazing loss to ZOO'
-        sname    = 'graze_' // trim(zooplankton(n)%sname) // '_zoo'
+        lname    = trim(zooplankton(n)%lname) // ' grazing loss to ZOO TOT'
+        sname    = 'graze_' // trim(zooplankton(n)%sname) // '_zootot'
         units    = 'mmol/m^3/s'
         vgrid    = 'layer_avg'
         truncate = .true.
         call diags%add_diagnostic(lname, sname, units, vgrid, truncate,  &
-             ind%zoo_graze_zoo(n), marbl_status_log)
+             ind%zoo_graze_zootot(n), marbl_status_log)
         if (marbl_status_log%labort_marbl) then
           call log_add_diagnostics_error(marbl_status_log, sname, subname)
           return
         end if
+
+        do m=1, zooplankton_cnt
+            lname    = trim(zooplankton(n)%lname) // ' grazing loss to ' // trim(zooplankton(m)%lname)
+            sname    = 'graze_' // trim(zooplankton(n)%sname) // '_' // trim(zooplankton(m)%sname)
+            units    = 'mmol/m^3/s'
+            vgrid    = 'layer_avg'
+            truncate = .true.
+            call diags%add_diagnostic(lname, sname, units, vgrid, truncate,  &
+                 ind%zoo_graze_zoo(n,m), marbl_status_log)
+            if (marbl_status_log%labort_marbl) then
+              call log_add_diagnostics_error(marbl_status_log, sname, subname)
+              return
+            end if
+        end do
 
         lname    = trim(zooplankton(n)%lname) // ' grazing gain'
         sname    = 'x_graze_' // trim(zooplankton(n)%sname)
@@ -4487,7 +4519,7 @@ contains
     !-----------------------------------------------------------------------
     !  local variables
     !-----------------------------------------------------------------------
-    integer(int_kind) :: n
+    integer(int_kind) :: n, m, k
     real(r8) :: autotrophC_weight(marbl_domain%km)
     real(r8) :: autotrophC_zint_100m
     real(r8) :: limterm(marbl_domain%km)
@@ -4589,7 +4621,14 @@ contains
             autotroph_secondary_species(n,:)%auto_graze
        diags(ind%auto_graze_poc(n))%field_3d(:, 1) = autotroph_secondary_species(n,:)%auto_graze_poc
        diags(ind%auto_graze_doc(n))%field_3d(:, 1) = autotroph_secondary_species(n,:)%auto_graze_doc
-       diags(ind%auto_graze_zoo(n))%field_3d(:, 1) = autotroph_secondary_species(n,:)%auto_graze_zoo
+       diags(ind%auto_graze_zootot(n))%field_3d(:, 1) = autotroph_secondary_species(n,:)%auto_graze_zootot
+
+       do m=1, zooplankton_cnt
+           do k=1, marbl_domain%km
+               diags(ind%auto_graze_zoo(n,m))%field_3d(k, 1) = autotroph_secondary_species(n,k)%auto_graze_zoo(m)
+           end do
+       end do
+
        diags(ind%auto_loss(n))%field_3d(:, 1)      = autotroph_secondary_species(n,:)%auto_loss
        diags(ind%auto_loss_poc(n))%field_3d(:, 1)  = autotroph_secondary_species(n,:)%auto_loss_poc
        diags(ind%auto_loss_doc(n))%field_3d(:, 1)  = autotroph_secondary_species(n,:)%auto_loss_doc
@@ -4648,7 +4687,7 @@ contains
             delta_z, kmt, full_depth_integral=diags(ind%auto_graze_doc_zint(n))%field_2d(1), &
             near_surface_integral=diags(ind%auto_graze_doc_zint_100m(n))%field_2d(1))
 
-       call compute_vertical_integrals(diags(ind%auto_graze_zoo(n))%field_3d(:, 1), &
+       call compute_vertical_integrals(diags(ind%auto_graze_zootot(n))%field_3d(:, 1), &
             delta_z, kmt, full_depth_integral=diags(ind%auto_graze_zoo_zint(n))%field_2d(1), &
             near_surface_integral=diags(ind%auto_graze_zoo_zint_100m(n))%field_2d(1))
 
@@ -4865,7 +4904,7 @@ contains
     !-----------------------------------------------------------------------
     !  local variables
     !-----------------------------------------------------------------------
-    integer(int_kind) :: n
+    integer(int_kind) :: n, m, k
     !-----------------------------------------------------------------------
 
     associate(                                     &
@@ -4882,8 +4921,14 @@ contains
        diags(ind%zoo_graze(n))%field_3d(:, 1)     = zooplankton_secondary_species(n,:)%zoo_graze
        diags(ind%zoo_graze_poc(n))%field_3d(:, 1) = zooplankton_secondary_species(n,:)%zoo_graze_poc
        diags(ind%zoo_graze_doc(n))%field_3d(:, 1) = zooplankton_secondary_species(n,:)%zoo_graze_doc
-       diags(ind%zoo_graze_zoo(n))%field_3d(:, 1) = zooplankton_secondary_species(n,:)%zoo_graze_zoo
+       diags(ind%zoo_graze_zootot(n))%field_3d(:, 1) = zooplankton_secondary_species(n,:)%zoo_graze_zootot
        diags(ind%x_graze_zoo(n))%field_3d(:, 1)   = zooplankton_secondary_species(n,:)%x_graze_zoo
+
+       do m = 1, zooplankton_cnt
+           do k = 1, marbl_domain%km
+               diags(ind%zoo_graze_zoo(n,m))%field_3d(k, 1) = zooplankton_secondary_species(n, k)%zoo_graze_zoo(m)
+           end do
+       end do
 
        ! vertical integrals
 
@@ -4911,7 +4956,7 @@ contains
             delta_z, kmt, full_depth_integral=diags(ind%zoo_graze_doc_zint(n))%field_2d(1), &
             near_surface_integral=diags(ind%zoo_graze_doc_zint_100m(n))%field_2d(1))
 
-       call compute_vertical_integrals(diags(ind%zoo_graze_zoo(n))%field_3d(:, 1), &
+       call compute_vertical_integrals(diags(ind%zoo_graze_zootot(n))%field_3d(:, 1),  &
             delta_z, kmt, full_depth_integral=diags(ind%zoo_graze_zoo_zint(n))%field_2d(1), &
             near_surface_integral=diags(ind%zoo_graze_zoo_zint_100m(n))%field_2d(1))
 
@@ -5858,6 +5903,7 @@ contains
       deallocate(this%auto_graze)
       deallocate(this%auto_graze_poc)
       deallocate(this%auto_graze_doc)
+      deallocate(this%auto_graze_zootot)
       deallocate(this%auto_graze_zoo)
       deallocate(this%auto_loss)
       deallocate(this%auto_loss_poc)
@@ -5872,6 +5918,7 @@ contains
       deallocate(this%zoo_graze)
       deallocate(this%zoo_graze_poc)
       deallocate(this%zoo_graze_doc)
+      deallocate(this%zoo_graze_zootot)
       deallocate(this%zoo_graze_zoo)
       deallocate(this%x_graze_zoo)
       if (ciso_on) then

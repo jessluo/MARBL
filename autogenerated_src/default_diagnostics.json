@@ -1840,6 +1840,14 @@
       "units": "mmol/m^3/s",
       "vertical_grid": "layer_avg"
    },
+   "graze_((autotroph_sname))_((zooplankton_sname))": {
+      "frequency": "medium",
+      "longname": "((autotroph_lname)) Grazing to ((zooplankton_lname))",
+      "operator": "average",
+      "truncate": true,
+      "units": "mmol/m^3/s",
+      "vertical_grid": "layer_avg"
+   },
    "graze_((autotroph_sname))_doc": {
       "frequency": "never",
       "longname": "((autotroph_lname)) Grazing to DOC",
@@ -1898,14 +1906,6 @@
       "units": "mmol/m^3 cm/s",
       "vertical_grid": "none"
    },
-   "graze_((autotroph_sname))_zoo": {
-      "frequency": "never",
-      "longname": "((autotroph_lname)) Grazing to ZOO",
-      "operator": "average",
-      "truncate": true,
-      "units": "mmol/m^3/s",
-      "vertical_grid": "layer_avg"
-   },
    "graze_((autotroph_sname))_zoo_zint": {
       "frequency": "never",
       "longname": "((autotroph_lname)) Grazing to ZOO Vertical Integral",
@@ -1920,9 +1920,25 @@
       "units": "mmol/m^3 cm/s",
       "vertical_grid": "none"
    },
+   "graze_((autotroph_sname))_zootot": {
+      "frequency": "medium",
+      "longname": "((autotroph_lname)) Grazing to ZOO TOT",
+      "operator": "average",
+      "truncate": true,
+      "units": "mmol/m^3/s",
+      "vertical_grid": "layer_avg"
+   },
    "graze_((zooplankton_sname))": {
       "frequency": "never",
       "longname": "((zooplankton_lname)) grazing loss",
+      "operator": "average",
+      "truncate": true,
+      "units": "mmol/m^3/s",
+      "vertical_grid": "layer_avg"
+   },
+   "graze_((zooplankton_sname))_((zooplankton_sname))": {
+      "frequency": "never",
+      "longname": "((zooplankton_lname)) grazing loss to ((zooplankton_lname))",
       "operator": "average",
       "truncate": true,
       "units": "mmol/m^3/s",
@@ -1986,14 +2002,6 @@
       "units": "mmol/m^3 cm/s",
       "vertical_grid": "none"
    },
-   "graze_((zooplankton_sname))_zoo": {
-      "frequency": "never",
-      "longname": "((zooplankton_lname)) grazing loss to ZOO",
-      "operator": "average",
-      "truncate": true,
-      "units": "mmol/m^3/s",
-      "vertical_grid": "layer_avg"
-   },
    "graze_((zooplankton_sname))_zoo_zint": {
       "frequency": "never",
       "longname": "((zooplankton_lname)) Grazing to ZOO Vertical Integral",
@@ -2007,6 +2015,14 @@
       "operator": "average",
       "units": "mmol/m^3 cm/s",
       "vertical_grid": "none"
+   },
+   "graze_((zooplankton_sname))_zootot": {
+      "frequency": "never",
+      "longname": "((zooplankton_lname)) grazing loss to ZOO TOT",
+      "operator": "average",
+      "truncate": true,
+      "units": "mmol/m^3/s",
+      "vertical_grid": "layer_avg"
    },
    "graze_auto_TOT": {
       "frequency": "low",

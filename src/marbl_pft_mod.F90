@@ -149,7 +149,7 @@ module marbl_pft_mod
      real(r8) :: auto_loss_dic   ! auto_loss routed to dic (mmol C/m^3/sec)
      real(r8) :: auto_agg        ! autotroph aggregation (mmol C/m^3/sec)
      real(r8) :: auto_graze      ! autotroph grazing rate (mmol C/m^3/sec)
-     real(r8) :: auto_graze_zoo  ! auto_graze routed to zoo (mmol C/m^3/sec)
+     real(r8) :: auto_graze_zootot ! auto_graze routed to zoo total (mmol C/m^3/sec)
      real(r8) :: auto_graze_poc  ! auto_graze routed to poc (mmol C/m^3/sec)
      real(r8) :: auto_graze_doc  ! auto_graze routed to doc (mmol C/m^3/sec)
      real(r8) :: auto_graze_dic  ! auto_graze routed to dic (mmol C/m^3/sec)
@@ -160,6 +160,7 @@ module marbl_pft_mod
      real(r8) :: remaining_P_dop ! remaining_P from grazing routed to DOP pool
      real(r8) :: remaining_P_pop ! remaining_P from grazing routed to POP pool
      real(r8) :: remaining_P_dip ! remaining_P from grazing routed to remin
+     real(r8), allocatable :: auto_graze_zoo(:)  ! auto_graze routed to individual zoo (mmol C/m^3/sec)
   end type autotroph_secondary_species_type
 
   !*****************************************************************************
@@ -168,7 +169,7 @@ module marbl_pft_mod
      real(r8) :: f_zoo_detr       ! frac of zoo losses into large detrital pool (non-dim)
      real(r8) :: x_graze_zoo      ! {auto, zoo}_graze routed to zoo (mmol C/m^3/sec)
      real(r8) :: zoo_graze        ! zooplankton losses due to grazing (mmol C/m^3/sec)
-     real(r8) :: zoo_graze_zoo    ! grazing of zooplankton routed to zoo (mmol C/m^3/sec)
+     real(r8) :: zoo_graze_zootot ! grazing of zooplankton routed to zoo total (mmol C/m^3/sec)
      real(r8) :: zoo_graze_poc    ! grazing of zooplankton routed to poc (mmol C/m^3/sec)
      real(r8) :: zoo_graze_doc    ! grazing of zooplankton routed to doc (mmol C/m^3/sec)
      real(r8) :: zoo_graze_dic    ! grazing of zooplankton routed to dic (mmol C/m^3/sec)
@@ -177,6 +178,7 @@ module marbl_pft_mod
      real(r8) :: zoo_loss_doc     ! zoo_loss routed to doc (mmol C/m^3/sec)
      real(r8) :: zoo_loss_dic     ! zoo_loss routed to dic (mmol C/m^3/sec)
      real(r8) :: Zprime           ! used to limit zoo mort at low biomass (mmol C/m^3)
+     real(r8), allocatable :: zoo_graze_zoo(:)    ! grazing of zooplankton routed to individual zoo (mmol C/m^3/sec)
   end type zooplankton_secondary_species_type
 
   !****************************************************************************
