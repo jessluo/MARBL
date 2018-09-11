@@ -2459,7 +2459,7 @@ contains
     !-----------------------------------------------------------------------
 
     cks = 10._r8
-    cksi = 6._r8
+    cksi = 5._r8
 
     do auto_ind = 1, autotroph_cnt
        if (lvariable_PtoC) then
@@ -2829,7 +2829,7 @@ contains
     type(autotroph_type)             , intent(in)  :: autotrophs(auto_cnt)
     type(autotroph_local_type)             , intent(in)  :: autotroph_local(auto_cnt)
     real(r8)                               , intent(in)  :: temperature
-    type(autotroph_secondary_species_type) , intent(out) :: autotroph_secondary_species(auto_cnt)
+    type(autotroph_secondary_species_type) , intent(inout) :: autotroph_secondary_species(auto_cnt)
 
     !-----------------------------------------------------------------------
     !  local variables
@@ -2931,7 +2931,7 @@ contains
     type(autotroph_type)                   , intent(in)  :: autotrophs(:)
     real(r8)                               , intent(in)  :: tracer_local(:)
     type(marbl_tracer_index_type)          , intent(in)  :: marbl_tracer_indices
-    type(autotroph_secondary_species_type) , intent(out) :: autotroph_secondary_species(:)
+    type(autotroph_secondary_species_type) , intent(inout) :: autotroph_secondary_species(:)
 
     !-----------------------------------------------------------------------
     !  local variables
@@ -3238,7 +3238,7 @@ contains
 
     integer(int_kind)                      , intent(in)  :: auto_cnt
     type(autotroph_type)                   , intent(in)  :: autotrophs(auto_cnt)
-    type(autotroph_secondary_species_type) , intent(out) :: autotroph_secondary_species(auto_cnt)
+    type(autotroph_secondary_species_type) , intent(inout) :: autotroph_secondary_species(auto_cnt)
 
     !-----------------------------------------------------------------------
     !  local variables
